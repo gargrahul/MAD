@@ -123,6 +123,7 @@ def get_args() -> argparse.Namespace:
         --keep_model_dir: Keep the model directory after the application finishes running.
         -o, --output: Output file for the result.
         --log_level: Log level for the logger.
+        --hf_token: huggingface token.
 
     Returns:
         argparse.Namespace: The input arguments
@@ -167,6 +168,12 @@ def get_args() -> argparse.Namespace:
     parser.add_argument(
         "--log_level", type=str, help="Log level for the logger.", default="INFO"
     )
+    parser.add_argument(
+        "--hf_token",
+        type=str,
+        help="huggingface token to access gated huggingface models.",
+        default="",
+    )
 
     args = parser.parse_args()
     return args
@@ -196,6 +203,7 @@ def main() -> bool:
     keep_model_dir = args.keep_model_dir
     log_level = args.log_level
     output = args.output
+    hf_token = args.hf_token
 
     log_file = f"logs/{model_name}.live.log"
     # Check the log file exist in the directory or not, if not then create the log file, if exist then empty the log file.
@@ -324,12 +332,12 @@ def main() -> bool:
 
         # Add environment variables
         # docker_opts += "--env MAD_MODEL_NAME='" + model_name + "' "
-
         run_envs = {
             "MAD_MODEL_NAME": model_name,
             "MAD_GPU_VENDOR": get_gpu_vendor(),
             "MAD_SYSTEM_NGPUS": get_system_gpus(),
-            "MAD_SYSTEM_GPU_ARCHITECTURE": get_system_gpu_arch()
+            "MAD_SYSTEM_GPU_ARCHITECTURE": get_system_gpu_arch(),
+            "HF_TOKEN" : hf_token
         }
         docker_opts += get_env_docker_args(run_envs)
 
@@ -372,12 +380,17 @@ def main() -> bool:
             docker.sh(f"rm -rf {model_dir}")
 
             # Clone the model repository
-            docker.sh(f"git clone {model_url}")
+            try:
+                docker.sh(f"git clone {model_url}")
 
-            # Update the submodules
-            docker.sh(f"git config --global --add safe.directory /myworkspace/{model_dir}")
-            docker.sh(f"git config --global --add safe.directory /myworkspace")
-            docker.sh(f"cd {model_dir} && git submodule update --init --recursive")
+                # Update the submodules
+                docker.sh(f"git config --global --add safe.directory /myworkspace/{model_dir}")
+                docker.sh(f"git config --global --add safe.directory /myworkspace")
+                docker.sh(f"cd {model_dir} && git submodule update --init --recursive")
+            except: 
+                logger.info("url is not provided")
+                model_dir = "run_directory"
+                docker.sh(f"mkdir -p {model_dir}")
 
             # Check the model directory
             docker.sh(f"ls -la /myworkspace/{model_dir}")

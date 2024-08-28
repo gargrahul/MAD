@@ -736,9 +736,9 @@ def get_gpu_docker_args() -> str:
     gpu_args = ""
     # Use all GPUs for docker run command.
     if gpu_vendor == "NVIDIA":
-        gpu_args = f"--gpus all"
+        gpu_args = f"--gpus all --shm-size 16g"
     elif gpu_vendor == "AMD":
-        gpu_args = f"--device=/dev/kfd --device=/dev/dri"
+        gpu_args = f"--device=/dev/kfd --device=/dev/dri --shm-size 16g"
     else:
         gpu_args = ""
 
