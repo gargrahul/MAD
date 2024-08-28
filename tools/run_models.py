@@ -375,12 +375,12 @@ def main() -> bool:
                 logger.error("No GPU information available")
                 raise ValueError("Unknown GPU type")
 
-            # Clean up the previous model
-            model_dir = model_url.split("/")[-1]
-            docker.sh(f"rm -rf {model_dir}")
-
-            # Clone the model repository
             try:
+                # Clean up the previous model
+                model_dir = model_url.split("/")[-1]
+                docker.sh(f"rm -rf {model_dir}")
+
+                # Clone the model repository
                 docker.sh(f"git clone {model_url}")
 
                 # Update the submodules
