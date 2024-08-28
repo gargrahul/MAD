@@ -67,7 +67,7 @@ Use this command to run performance benchmark of the Llama 3.1 8B model on one G
 
 ```sh
 export hf_token="your personal huggingface token to access gated models"
-python3 tools/run_models.py --model_name pyt_vllm_llama-3.1-8b --hf_token $hf_token
+python3 tools/run_models.py --model_name pyt_vllm_llama-3.1-8b --hf_token $hf_token --keep_model_dir
 ```
 
 The ROCm MAD will launch a docker container with this name **container_ci-pyt_vllm_llama-3.1-8b** and the latency and throughput reports of the model are collected in the following path
