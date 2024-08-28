@@ -99,7 +99,7 @@ Although the following 12 models are pre-configured to collect latency and throu
 ### Standalone Benchmarking
 -----------------------------
 
-Users also can run benchmark tool manually after you launch a docker container.
+Users also can run benchmark tool after you launch a docker container.
 
 ```sh
 docker pull rocm/pytorch-private:20240827_exec_dashboard_unified_rc6_withvllm # TODO: update to the final public image
