@@ -25,7 +25,7 @@
 #
 #################################################################################
 # TODO: update to the public image
-ARG BASE_DOCKER=rocm/pytorch-private:20240827_exec_dashboard_unified_rc6_withvllm
+ARG BASE_DOCKER=rocm/pytorch-private:20240828_exec_dashboard_unified_vllm_v7
 FROM $BASE_DOCKER
 
 USER root
