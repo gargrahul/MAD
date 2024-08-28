@@ -26,24 +26,6 @@
 #################################################################################
 set -ex
 
-#TODO: remove these env vars when the docker img (rocm/pytorch-private:20240827_exec_dashboard_unified_rc6_withvllm) is pre-configured 
-
-# vLLM performance settings
-export HIP_FORCE_DEV_KERNARG=1
-export VLLM_USE_ROCM_CUSTOM_PAGED_ATTN=1
-export VLLM_USE_TRITON_FLASH_ATTN=0
-export VLLM_INSTALL_PUNICA_KERNELS=1
-export TOKENIZERS_PARALLELISM=false
-export RAY_EXPERIMENTAL_NOSET_ROCR_VISIBLE_DEVICES=1
-export NCCL_MIN_NCHANNELS=112
-
-# PyTorch tunableOp settings
-export PYTORCH_TUNABLEOP_ENABLED=1
-export PYTORCH_TUNABLEOP_TUNING=0
-export PYTORCH_TUNABLEOP_VERBOSE=0
-export PYTORCH_TUNABLEOP_NUMERICAL_CHECK=0
-export PYTORCH_TUNABLEOP_FILENAME=/pre-tuned/afo_tune_device_%d_full.csv
-
 if [[ "$MAD_SYSTEM_GPU_ARCHITECTURE" != *"gfx94"* ]] && [[ "$MAD_SYSTEM_GPU_ARCHITECTURE" != *"gfx90a"* ]]; then 
 	echo "Unsuported GPU arch detected, please use supported GPU archetecture (MI300X | MI250 | MI210)\n"
 	exit 1
