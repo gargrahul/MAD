@@ -71,7 +71,7 @@ The ROCm MAD will launch a docker container with this name **container_ci-pyt_vl
 ~/MAD/run_directory/reports_float16/
 ```
 
-Although the following 12 models are pre-configured to collect latency and throughput performance data, users can also change the benchmarking parameters. Refer to the #manual-benchmarking
+Although the following 12 models are pre-configured to collect latency and throughput performance data, users can also change the benchmarking parameters. Refer to the [Manual Benchmarking](#manual-benchmarking)
 
 #### Available models
 
@@ -94,13 +94,11 @@ Although the following 12 models are pre-configured to collect latency and throu
 ### Manual Benchmarking
 -----------------------------
 
-Users also can run benchmark tool manually by launching a docker.
+Users also can run benchmark tool manually after you launch a docker container.
 
 ```sh
 docker pull rocm/pytorch-private:20240827_exec_dashboard_unified_rc6_withvllm # TODO: update to the final public image
-
 docker run -it --device=/dev/kfd --device=/dev/dri --group-add video -p 8080:8080 --shm-size 16G --security-opt seccomp=unconfined --security-opt apparmor=unconfined --cap-add=SYS_PTRACE -v $(pwd):/workspace --env HUGGINGFACE_HUB_CACHE=/workspace --name unified_docker_vllm rocm/pytorch-private:20240827_exec_dashboard_unified_rc6_withvllm
-
 ```
 
 Clone the ROCm MAD now inside the docker and move to the benchmark scripts location at **~/MAD/scripts/vllm**. 
