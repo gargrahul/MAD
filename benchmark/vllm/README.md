@@ -26,6 +26,9 @@ accelerator. It includes:
 Use the following instructions to reproduce the benchmark results on an
 MI300X accelerator with a prebuilt vLLM Docker image.
 
+[MAD-integrated Benchmarking](#mad-integrated-benchmarking)
+[Standalone Benchmarking](#standalone-benchmarking)
+
 ### NUMA balancing setting
 
 To optimize performance, disable automatic NUMA balancing. Otherwise, the GPU
@@ -48,7 +51,7 @@ The following command pulls the Docker image from Docker Hub.
 docker pull rocm/pytorch-private:20240827_exec_dashboard_unified_rc6_withvllm # TODO: update to the final public image
 ```
 
-### Automatic Benchmarking with MAD library
+### MAD Integrated Benchmarking
 
 Copy the ROCm Model Automation and Dashboarding (MAD) to a local directory and install required packages to the host machine.
 
@@ -71,7 +74,7 @@ The ROCm MAD will launch a docker container with this name **container_ci-pyt_vl
 ~/MAD/run_directory/reports_float16/
 ```
 
-Although the following 12 models are pre-configured to collect latency and throughput performance data, users can also change the benchmarking parameters. Refer to the [Manual Benchmarking](#manual-benchmarking)
+Although the following 12 models are pre-configured to collect latency and throughput performance data, users can also change the benchmarking parameters. Refer to the [Standalone Benchmarking](#standalone-benchmarking)
 
 #### Available models
 
@@ -91,7 +94,7 @@ Although the following 12 models are pre-configured to collect latency and throu
 | pyt_vllm_jais-30b       |
 
 
-### Manual Benchmarking
+### Standalone Benchmarking
 -----------------------------
 
 Users also can run benchmark tool manually after you launch a docker container.
