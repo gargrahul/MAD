@@ -42,13 +42,59 @@ cat /proc/sys/kernel/numa_balancing
 
 ### Download the Docker image 🐳
 
-The following command pulls the Docker image from Docker Hub and
-launches a new Docker instance (*vllm\_mi300x*).
+The following command pulls the Docker image from Docker Hub.
 
 ```sh
 docker pull rocm/pytorch-private:20240827_exec_dashboard_unified_rc6_withvllm # TODO: update to the final public iamge
+```
 
-docker run -it --device=/dev/kfd --device=/dev/dri --group-add video -p 8080:8080 --shm-size 16G --security-opt seccomp=unconfined --security-opt apparmor=unconfined --cap-add=SYS_PTRACE -v $(pwd):/workspace --env HUGGINGFACE_HUB_CACHE=/workspace --name unified_docker_vllm rocm/pytorch-private:20240827_exec_dashboard_unified_rc6_withvllm
+### Benchmark Methodology
+
+Copy the ROCm Model Automation and Dashboarding (MAD) to a local directory and install required packages to the host machine.
+
+```sh
+git clone https://github.com/ROCm/MAD
+cd MAD
+pip install -r requirements.txt
+```
+
+### Running models in MAD
+
+Use this command to run performance benchmark of the Llama 3.1 8B model on one GPU with float16 data type in the host machine. 
+
+```sh
+export hf_token="your personal huggingface token to access gated models"
+python3 tools/run_models.py --model_name pyt_vllm_llama-3.1-8b --hf_token $hf_token
+```
+
+#### Available models
+
+| model_name              |
+| ----------------------- |
+| pyt_vllm_llama-3.1-8b   |
+| pyt_vllm_llama-3.1-70b  |
+| pyt_vllm_llama-3.1-405b |
+| pyt_vllm_llama-2-7b     |
+| pyt_vllm_llama-2-70b    |
+| pyt_vllm_mixtral-8x7b   |
+| pyt_vllm_mixtral-8x22b  |
+| pyt_vllm_mistral-7b     |
+| pyt_vllm_qwen2-7b       |
+| pyt_vllm_qwen2-72b      |
+| pyt_vllm_jais-13b       |
+| pyt_vllm_jais-30b       |
+
+The ROCm MAD will launch a docker container with this name **container_ci-pyt_vllm_llama-3.1-8b** and the latency and throughput reports of the model are collected **~/MAD/run_directory/reports_float16/**.
+
+## Benchmarking details
+-----------------------------
+
+The model performance benchmark will be automatically collected by the MAD. But users can also modify benchmark conditions in the following scripts.
+
+```sh
+~/MAD/scripts/vllm/run.sh
+~/MAD/scripts/vllm/vllm_benchmark_report.sh
+~/MAD/scripts/vllm/vllm_benchmark_report.py
 ```
 
 ### LLM performance settings
@@ -79,19 +125,6 @@ export PYTORCH_TUNABLEOP_VERBOSE=0
 export PYTORCH_TUNABLEOP_NUMERICAL_CHECK=0
 export PYTORCH_TUNABLEOP_FILENAME=/pre-tuned/afo_tune_device_%d_full.csv
 ```
-
-### Copy the repository from GitHub
-
-Copy the performance benchmarking scripts from GitHub to a local directory.
-
-```sh
-git clone https://github.com/ROCm/MAD
-cd MAD/scripts/vllm
-```
-
-### Methodology
-
-Use the following command and variables to run the benchmark tests.
 
 #### Command
 
