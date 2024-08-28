@@ -48,7 +48,7 @@ The following command pulls the Docker image from Docker Hub.
 docker pull rocm/pytorch-private:20240827_exec_dashboard_unified_rc6_withvllm # TODO: update to the final public iamge
 ```
 
-### Benchmark Methodology
+### Automatic Benchmarkding with MAD library
 
 Copy the ROCm Model Automation and Dashboarding (MAD) to a local directory and install required packages to the host machine.
 
@@ -58,14 +58,20 @@ cd MAD
 pip install -r requirements.txt
 ```
 
-### Running models in MAD
-
 Use this command to run performance benchmark of the Llama 3.1 8B model on one GPU with float16 data type in the host machine. 
 
 ```sh
 export hf_token="your personal huggingface token to access gated models"
 python3 tools/run_models.py --model_name pyt_vllm_llama-3.1-8b --hf_token $hf_token
 ```
+
+The ROCm MAD will launch a docker container with this name **container_ci-pyt_vllm_llama-3.1-8b** and the latency and throughput reports of the model are collected in the following path
+
+```sh
+~/MAD/run_directory/reports_float16/
+```
+
+Although ihe following 12 models are pre-configured to collect latency and throughput performance data, users can also change the benchmarking parameters. Refer to the #Manual Benchmarking
 
 #### Available models
 
@@ -84,46 +90,24 @@ python3 tools/run_models.py --model_name pyt_vllm_llama-3.1-8b --hf_token $hf_to
 | pyt_vllm_jais-13b       |
 | pyt_vllm_jais-30b       |
 
-The ROCm MAD will launch a docker container with this name **container_ci-pyt_vllm_llama-3.1-8b** and the latency and throughput reports of the model are collected **~/MAD/run_directory/reports_float16/**.
 
-## Benchmarking details
+### Manual Benchmarking
 -----------------------------
 
-The model performance benchmark will be automatically collected by the MAD. But users can also modify benchmark conditions in the following scripts.
+Users also can run benchmark tool manually by launching a docker.
 
 ```sh
-~/MAD/scripts/vllm/run.sh
-~/MAD/scripts/vllm/vllm_benchmark_report.sh
-~/MAD/scripts/vllm/vllm_benchmark_report.py
+docker pull rocm/pytorch-private:20240827_exec_dashboard_unified_rc6_withvllm # TODO: update to the final public iamge
+
+docker run -it --device=/dev/kfd --device=/dev/dri --group-add video -p 8080:8080 --shm-size 16G --security-opt seccomp=unconfined --security-opt apparmor=unconfined --cap-add=SYS_PTRACE -v $(pwd):/workspace --env HUGGINGFACE_HUB_CACHE=/workspace --name unified_docker_vllm rocm/pytorch-private:20240827_exec_dashboard_unified_rc6_withvllm
+
 ```
 
-### LLM performance settings
-
-Some environment variables enhance the performance of the vLLM kernels
-and PyTorch's tunableOp on the MI300X accelerator. The settings below
-are already preconfigured in the Docker image. See the
-[AMD Instinct MI300X workload optimization](https://rocm.docs.amd.com/en/latest/how-to/tuning-guides/mi300x/workload.html) guide for more information.
-
--   vLLM performance settings
+Clone the ROCm MAD now inside the docker and move to the benchmark scripts location at **~/MAD/scripts/vllm**. 
 
 ```sh
-export HIP_FORCE_DEV_KERNARG=1
-export VLLM_USE_ROCM_CUSTOM_PAGED_ATTN=1
-export VLLM_USE_TRITON_FLASH_ATTN=0
-export VLLM_INSTALL_PUNICA_KERNELS=1
-export TOKENIZERS_PARALLELISM=false
-export RAY_EXPERIMENTAL_NOSET_ROCR_VISIBLE_DEVICES=1
-export NCCL_MIN_NCHANNELS=112
-```
-
--   PyTorch tunableOp settings
-
-```sh
-export PYTORCH_TUNABLEOP_ENABLED=1
-export PYTORCH_TUNABLEOP_TUNING=0
-export PYTORCH_TUNABLEOP_VERBOSE=0
-export PYTORCH_TUNABLEOP_NUMERICAL_CHECK=0
-export PYTORCH_TUNABLEOP_FILENAME=/pre-tuned/afo_tune_device_%d_full.csv
+git clone https://github.com/ROCm/MAD
+cd MAD/scripts/vllm
 ```
 
 #### Command
