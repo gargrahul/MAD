@@ -50,7 +50,7 @@ cat /proc/sys/kernel/numa_balancing
 The following command pulls the Docker image from Docker Hub.
 
 ```sh
-docker pull rocm/pytorch-private:20240827_exec_dashboard_unified_rc6_withvllm # TODO: update to the final public image
+docker pull rocm/pytorch-private:20240828_exec_dashboard_unified_vllm_v7 # TODO: update to the final public image
 ```
 
 ### MAD Integrated Benchmarking
@@ -102,7 +102,7 @@ Although the following 12 models are pre-configured to collect latency and throu
 Users also can run benchmark tool after you launch a docker container.
 
 ```sh
-docker pull rocm/pytorch-private:20240827_exec_dashboard_unified_rc6_withvllm # TODO: update to the final public image
+docker pull rocm/pytorch-private:20240828_exec_dashboard_unified_vllm_v7 # TODO: update to the final public image
 docker run -it --device=/dev/kfd --device=/dev/dri --group-add video -p 8080:8080 --shm-size 16G --security-opt seccomp=unconfined --security-opt apparmor=unconfined --cap-add=SYS_PTRACE -v $(pwd):/workspace --env HUGGINGFACE_HUB_CACHE=/workspace --name unified_docker_vllm rocm/pytorch-private:20240827_exec_dashboard_unified_rc6_withvllm
 ```
 
