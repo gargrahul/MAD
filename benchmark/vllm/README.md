@@ -107,6 +107,10 @@ git clone https://github.com/ROCm/MAD
 cd MAD/scripts/vllm
 ```
 
+#### Multiprocessing distributed executor
+
+To optimize vLLM performance, We recommend using multiprocessing API server argument. Adding the `--distributed-executor-backend mp` does so.
+
 #### Command
 
 ```sh
