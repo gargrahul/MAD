@@ -26,8 +26,8 @@
 #################################################################################
 set -ex
 
-if [[ "$MAD_SYSTEM_GPU_ARCHITECTURE" != *"gfx94"* ]] && [[ "$MAD_SYSTEM_GPU_ARCHITECTURE" != *"gfx90a"* ]]; then 
-	echo "Unsuported GPU arch detected, please use supported GPU archetecture (MI300X | MI250 | MI210)\n"
+if [[ "$MAD_SYSTEM_GPU_ARCHITECTURE" != *"gfx94"* ]]; then 
+	echo "Unsuported GPU arch detected, please use supported MI300X GPUs \n"
 	exit 1
 fi
 
