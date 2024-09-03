@@ -68,7 +68,7 @@ Req="256 2000"
 InThroughput="128 2048"
 OutThroughput="128 2048"
 
-report_dir="reports_${dtype}"
+report_dir="../reports_${dtype}"
 report_summary_dir="${report_dir}/summary"
 tool_latency="/app/vllm/benchmarks/benchmark_latency.py"
 tool_throughput="/app/vllm/benchmarks/benchmark_throughput.py"

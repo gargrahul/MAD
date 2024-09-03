@@ -31,6 +31,8 @@ if [[ "$MAD_SYSTEM_GPU_ARCHITECTURE" != *"gfx94"* ]]; then
 	exit 1
 fi
 
+export HF_TOKEN=$MAD_SECRETS_HFTOKEN
+
 # Parse named arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
