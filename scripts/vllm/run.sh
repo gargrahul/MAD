@@ -31,6 +31,8 @@ if [[ "$MAD_SYSTEM_GPU_ARCHITECTURE" != *"gfx94"* ]]; then
 	exit 1
 fi
 
+export HF_TOKEN=$MAD_SECRETS_HFTOKEN
+
 # Parse named arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
@@ -80,3 +82,5 @@ for scenario in $TEST_OPTION_SP; do
         ./vllm_benchmark_report.sh -s $scenario -m $MODEL_NAME -g $N_GPUS -d $dtype
     done
 done
+
+echo "performance: 1 pass"
