@@ -97,7 +97,7 @@ Although the following eight models are pre-configured to collect latency and th
 ### Standalone benchmarking
 -----------------------------
 
-Users also can run benchmark tool after you launch a docker container.
+Users also can run the benchmark tool after they launch a Docker container.
 
 ```sh
 docker pull rocm/vllm:rocm6.2_mi300_ubuntu22.04_py3.9_vllm_7c5fd50
