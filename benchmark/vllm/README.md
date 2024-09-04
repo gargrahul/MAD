@@ -65,7 +65,7 @@ cd MAD
 pip install -r requirements.txt
 ```
 
-Use this command to run performance benchmark of the Llama 3.1 8B model on one GPU with float16 data type in the host machine. 
+Use this command to run a performance benchmark test of the Llama 3.1 8B model on one GPU with float16 data type in the host machine. 
 
 ```sh
 export MAD_SECRETS_HFTOKEN="your personal huggingface token to access gated models"
