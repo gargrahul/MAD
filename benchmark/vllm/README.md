@@ -94,7 +94,7 @@ Although the following eight models are pre-configured to collect latency and th
 | pyt_vllm_jais-30b       |
 
 
-### Standalone Benchmarking
+### Standalone benchmarking
 -----------------------------
 
 Users also can run benchmark tool after you launch a docker container.
