@@ -19,7 +19,7 @@ accelerator. It includes:
 -   ✅ Tuning files (.csv format)
 
 With this Docker image, users can quickly validate the expected inference performance numbers on the MI300X accelerator. 
-We also provide tips and techniques so that users can get optimal performance with popular AI models.
+This guide also provides tips and techniques so that users can get optimal performance with popular AI models.
 
 
 ## Reproducing benchmark results 🚀
