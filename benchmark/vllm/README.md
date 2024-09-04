@@ -123,7 +123,7 @@ To optimize vLLM performance, add the multiprocessing API server argument `--dis
 
 -   Note: The input sequence length, output sequence length, and tensor parallel (TP) are already configured. You don't need to specify them with this script.
 
--   Note: If you encounter this error, you need to pass your access-authorized huggingface token to the gated models.
+-   Note: If you encounter this error, pass your access-authorized Hugging Face token to the gated models.
 ```sh
 OSError: You are trying to access a gated repo.
 
