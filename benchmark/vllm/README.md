@@ -30,8 +30,8 @@ MI300X accelerator with a prebuilt vLLM Docker image.
 
 Users have two choices to reproduce the benchmark results.
 
--   [MAD-integrated Benchmarking](#mad-integrated-benchmarking)
--   [Standalone Benchmarking](#standalone-benchmarking)
+-   [MAD-integrated benchmarking](#mad-integrated-benchmarking)
+-   [Standalone benchmarking](#standalone-benchmarking)
 
 ### NUMA balancing setting
 
