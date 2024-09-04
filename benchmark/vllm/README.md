@@ -72,7 +72,7 @@ export MAD_SECRETS_HFTOKEN="your personal Hugging Face token to access gated mod
 python3 tools/run_models.py --model_name pyt_vllm_llama-3.1-8b --keep_model_dir --live_output --timeout 28800
 ```
 
-The ROCm MAD will launch a docker container with this name **container_ci-pyt_vllm_llama-3.1-8b** and the latency and throughput reports of the model are collected in the following path
+ROCm MAD launches a Docker container with the name `container_ci-pyt_vllm_llama-3.1-8b`. The latency and throughput reports of the model are collected in the following path:
 
 ```sh
 ~/MAD/reports_float16/
