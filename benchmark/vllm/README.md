@@ -57,7 +57,7 @@ docker pull rocm/vllm:rocm6.2_mi300_ubuntu22.04_py3.9_vllm_7c5fd50
 
 ### MAD-integrated benchmarking
 
-Copy the ROCm Model Automation and Dashboarding (MAD) to a local directory and install required packages to the host machine.
+Clone the ROCm Model Automation and Dashboarding (MAD) repository to a local directory and install the required packages on the host machine.
 
 ```sh
 git clone https://github.com/ROCm/MAD
