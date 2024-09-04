@@ -78,7 +78,7 @@ ROCm MAD launches a Docker container with the name `container_ci-pyt_vllm_llama-
 ~/MAD/reports_float16/
 ```
 
-Although the following 8 models are pre-configured to collect latency and throughput performance data, users can also change the benchmarking parameters. Refer to the [Standalone Benchmarking](#standalone-benchmarking)
+Although the following eight models are pre-configured to collect latency and throughput performance data, users can also change the benchmarking parameters. Refer to the [Standalone benchmarking](#standalone-benchmarking) section.
 
 #### Available models
 
