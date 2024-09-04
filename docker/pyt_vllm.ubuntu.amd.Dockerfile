@@ -24,8 +24,7 @@
 # SOFTWARE.
 #
 #################################################################################
-# TODO: update to the public image
-ARG BASE_DOCKER=rocm/pytorch-private:20240828_exec_dashboard_unified_vllm_v7
+ARG BASE_DOCKER=rocm/vllm:rocm6.2_mi300_ubuntu22.04_py3.9_vllm_7c5fd50
 FROM $BASE_DOCKER
 
 USER root

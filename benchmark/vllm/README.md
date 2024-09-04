@@ -18,6 +18,10 @@ accelerator. It includes:
 -   ✅ PyTorch 2.4 
 -   ✅ Tuning files (.csv format)
 
+With this docker image, the users can quickly validate expected inference performance numbers on the MI 300 accelerator. 
+We also provide tips and techniques so that users can get optimal performance with popular AI models.
+
+
 ## Reproducing benchmark results 🚀
 -----------------------------
 
@@ -48,7 +52,7 @@ cat /proc/sys/kernel/numa_balancing
 The following command pulls the Docker image from Docker Hub.
 
 ```sh
-docker pull rocm/pytorch-private:20240828_exec_dashboard_unified_vllm_v7 # TODO: update to the final public image
+docker pull rocm/vllm:rocm6.2_mi300_ubuntu22.04_py3.9_vllm_7c5fd50
 ```
 
 ### MAD Integrated Benchmarking
@@ -65,16 +69,16 @@ Use this command to run performance benchmark of the Llama 3.1 8B model on one G
 
 ```sh
 export MAD_SECRETS_HFTOKEN="your personal huggingface token to access gated models"
-python3 tools/run_models.py --model_name pyt_vllm_llama-3.1-8b --keep_model_dir --live_output --timeout 57600
+python3 tools/run_models.py --model_name pyt_vllm_llama-3.1-8b --keep_model_dir --live_output --timeout 28800
 ```
 
 The ROCm MAD will launch a docker container with this name **container_ci-pyt_vllm_llama-3.1-8b** and the latency and throughput reports of the model are collected in the following path
 
 ```sh
-~/MAD/run_directory/reports_float16/
+~/MAD/reports_float16/
 ```
 
-Although the following 12 models are pre-configured to collect latency and throughput performance data, users can also change the benchmarking parameters. Refer to the [Standalone Benchmarking](#standalone-benchmarking)
+Although the following 8 models are pre-configured to collect latency and throughput performance data, users can also change the benchmarking parameters. Refer to the [Standalone Benchmarking](#standalone-benchmarking)
 
 #### Available models
 
@@ -96,8 +100,8 @@ Although the following 12 models are pre-configured to collect latency and throu
 Users also can run benchmark tool after you launch a docker container.
 
 ```sh
-docker pull rocm/pytorch-private:20240828_exec_dashboard_unified_vllm_v7 # TODO: update to the final public image
-docker run -it --device=/dev/kfd --device=/dev/dri --group-add video -p 8080:8080 --shm-size 16G --security-opt seccomp=unconfined --security-opt apparmor=unconfined --cap-add=SYS_PTRACE -v $(pwd):/workspace --env HUGGINGFACE_HUB_CACHE=/workspace --name unified_docker_vllm rocm/pytorch-private:20240827_exec_dashboard_unified_rc6_withvllm
+docker pull rocm/vllm:rocm6.2_mi300_ubuntu22.04_py3.9_vllm_7c5fd50
+docker run -it --device=/dev/kfd --device=/dev/dri --group-add video -p 8080:8080 --shm-size 16G --security-opt seccomp=unconfined --security-opt apparmor=unconfined --cap-add=SYS_PTRACE -v $(pwd):/workspace --env HUGGINGFACE_HUB_CACHE=/workspace --name unified_docker_vllm rocm/vllm:rocm6.2_mi300_ubuntu22.04_py3.9_vllm_7c5fd50
 ```
 
 Clone the ROCm MAD now inside the docker and move to the benchmark scripts location at **~/MAD/scripts/vllm**. 
