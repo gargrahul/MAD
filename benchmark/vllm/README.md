@@ -55,7 +55,7 @@ The following command pulls the Docker image from Docker Hub.
 docker pull rocm/vllm:rocm6.2_mi300_ubuntu22.04_py3.9_vllm_7c5fd50
 ```
 
-### MAD Integrated Benchmarking
+### MAD-integrated benchmarking
 
 Copy the ROCm Model Automation and Dashboarding (MAD) to a local directory and install required packages to the host machine.
 
