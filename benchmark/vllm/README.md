@@ -104,7 +104,7 @@ docker pull rocm/vllm:rocm6.2_mi300_ubuntu22.04_py3.9_vllm_7c5fd50
 docker run -it --device=/dev/kfd --device=/dev/dri --group-add video -p 8080:8080 --shm-size 16G --security-opt seccomp=unconfined --security-opt apparmor=unconfined --cap-add=SYS_PTRACE -v $(pwd):/workspace --env HUGGINGFACE_HUB_CACHE=/workspace --name unified_docker_vllm rocm/vllm:rocm6.2_mi300_ubuntu22.04_py3.9_vllm_7c5fd50
 ```
 
-Clone the ROCm MAD now inside the docker and move to the benchmark scripts location at **~/MAD/scripts/vllm**. 
+Now clone the ROCm MAD repository inside the Docker image and move to the benchmark scripts directory at *~/MAD/scripts/vllm*. 
 
 ```sh
 git clone https://github.com/ROCm/MAD
