@@ -68,7 +68,7 @@ pip install -r requirements.txt
 Use this command to run a performance benchmark test of the Llama 3.1 8B model on one GPU with float16 data type in the host machine. 
 
 ```sh
-export MAD_SECRETS_HFTOKEN="your personal huggingface token to access gated models"
+export MAD_SECRETS_HFTOKEN="your personal Hugging Face token to access gated models"
 python3 tools/run_models.py --model_name pyt_vllm_llama-3.1-8b --keep_model_dir --live_output --timeout 28800
 ```
 
