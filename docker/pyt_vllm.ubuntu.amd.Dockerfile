@@ -24,7 +24,7 @@
 # SOFTWARE.
 #
 #################################################################################
-ARG BASE_DOCKER=rocm/pytorch:latest
+ARG BASE_DOCKER=rocm/vllm:rocm6.2_mi300_ubuntu22.04_py3.9_vllm_7c5fd50
 FROM $BASE_DOCKER
 
 USER root
@@ -32,41 +32,5 @@ ENV WORKSPACE_DIR=/workspace
 RUN mkdir -p $WORKSPACE_DIR
 WORKDIR $WORKSPACE_DIR
 
-# numpy is reinstalled because of pandas compatibility issues, remove the lines below once base image moves to numpy>1.20.3
-RUN pip3 install -U numpy
-RUN pip3 install -U scipy
-# Install huggingface transformers
-RUN cd /workspace && git clone https://github.com/ROCm/transformers transformers &&\
-    cd transformers &&\
-    git show --oneline -s && \
-    pip install -e .
-
-# Intentionally skip torchaudio, else it force upgrades torch as well
-RUN sed -i 's$torchaudio$$g' /workspace/transformers/examples/pytorch/_tests_requirements.txt
-
-# Install dependencies
-RUN cd /workspace/transformers/examples/pytorch && pip3 install -r _tests_requirements.txt
-RUN pip3 install --no-cache-dir GPUtil azureml azureml-core tokenizers ninja cerberus sympy sacremoses sacrebleu==1.5.1 sentencepiece scipy scikit-learn
-# setting datasets==1.9.0 due to Roberta SQUAD change, https://github.com/huggingface/transformers/issues/12880
-#RUN pip3 install --no-cache-dir datasets==1.9.0
-# https://github.com/huggingface/datasets/issues/3099
-RUN pip3 install -U huggingface_hub
-
-# ROCm gpg key
-RUN wget -q -O - http://repo.radeon.com/rocm/rocm.gpg.key | sudo apt-key add -
-RUN apt update && apt install -y \
-    unzip \
-    jq
-
-# add sshpass, sshfs for downloading from mlse-nas
-RUN apt-get install -y sshpass sshfs
-RUN apt-get install -y netcat
-
-# add locale en_US.UTF-8
-RUN apt-get install -y locales
-RUN locale-gen en_US.UTF-8
-
 # record configuration for posterity
 RUN pip3 list
-
-
