@@ -37,6 +37,7 @@
     "n_gpus": "-1",
     "owner": "mad.support@amd.com",
     "training_precision": "",
+    "multiple_results": "perf_pyt_vllm_llama-3.1-8b.csv",
     "tags": [
       "pyt",
       "vllm"
@@ -53,6 +54,7 @@
     "n_gpus": "-1",
     "owner": "mad.support@amd.com",
     "training_precision": "",
+    "multiple_results": "perf_pyt_vllm_llama-3.1-70b.csv",
     "tags": [
       "pyt",
       "vllm"
@@ -69,6 +71,7 @@
     "n_gpus": "-1",
     "owner": "mad.support@amd.com",
     "training_precision": "",
+    "multiple_results": "perf_pyt_vllm_llama-3.1-405b.csv",
     "tags": [
       "pyt",
       "vllm"
@@ -85,6 +88,7 @@
     "n_gpus": "-1",
     "owner": "mad.support@amd.com",
     "training_precision": "",
+    "multiple_results": "perf_pyt_vllm_llama-2-7b.csv",
     "tags": [
       "pyt",
       "vllm"
@@ -101,6 +105,7 @@
     "n_gpus": "-1",
     "owner": "mad.support@amd.com",
     "training_precision": "",
+    "multiple_results": "perf_pyt_vllm_mistral-7b.csv",
     "tags": [
       "pyt",
       "vllm"
@@ -117,6 +122,7 @@
     "n_gpus": "-1",
     "owner": "mad.support@amd.com",
     "training_precision": "",
+    "multiple_results": "perf_pyt_vllm_qwen2-7b.csv",
     "tags": [
       "pyt",
       "vllm"
@@ -133,6 +139,7 @@
     "n_gpus": "-1",
     "owner": "mad.support@amd.com",
     "training_precision": "",
+    "multiple_results": "perf_pyt_vllm_jais-13b.csv",
     "tags": [
       "pyt",
       "vllm"
@@ -149,6 +156,7 @@
     "n_gpus": "-1",
     "owner": "mad.support@amd.com",
     "training_precision": "",
+    "multiple_results": "perf_pyt_vllm_jais-30b.csv",
     "tags": [
       "pyt",
       "vllm"
