@@ -137,3 +137,9 @@ if [ "$scenario" == "throughput" ] || [ "$scenario" == "all" ]; then
         done
     done
 fi
+
+echo "Generate report of multiple results"
+tool_parser="parse_csv.py"
+latency_summary_csv=${report_summary_dir}/${model_name}_latency_report.csv
+throughput_summary_csv=${report_summary_dir}/${model_name}_throughput_report.csv
+python3 $tool_parser --file_latency $latency_summary_csv --file_throughput $throughput_summary_csv

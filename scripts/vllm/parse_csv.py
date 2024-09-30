@@ -82,4 +82,4 @@ if __name__ == '__main__':
 
     # Combine the DataFrames of latency and throughput and write to a new CSV file
     df_combined = pd.concat([df_latency, df_throughput], ignore_index=True)
-    df_combined.to_csv(f'{model_name}.csv', index=False)
+    df_combined.to_csv(f'perf_{model_name}.csv', index=False)
