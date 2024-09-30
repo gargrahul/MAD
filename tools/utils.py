@@ -66,8 +66,10 @@ import subprocess
 import signal
 import re
 import collections.abc
+import pandas as pd
 
 from logger import get_logger
+
 logger = get_logger("MAD")
 logger.removeHandler(logger.handlers[0])
 
@@ -178,7 +180,9 @@ class Console:
         if proc.returncode != 0:
             if not can_fail:
                 if not secret:
-                    logger.error(f"Subprocess '{command}' failed with exit code {proc.returncode}")
+                    logger.error(
+                        f"Subprocess '{command}' failed with exit code {proc.returncode}"
+                    )
                     raise RuntimeError(
                         "Subprocess '"
                         + command
@@ -186,7 +190,9 @@ class Console:
                         + str(proc.returncode)
                     )
                 else:
-                    logger.error(f"Subprocess '{secret}' failed with exit code {proc.returncode}")
+                    logger.error(
+                        f"Subprocess '{secret}' failed with exit code {proc.returncode}"
+                    )
                     raise RuntimeError(
                         "Subprocess '"
                         + secret
@@ -198,20 +204,21 @@ class Console:
 
 class Docker:
     """A class to run shell commands in a Docker container.
-    
+
     Attributes:
         docker_sha (str): The Docker SHA.
         keep_alive (bool): Whether to keep the container alive.
         console (Console): The console.
         userid (str): The user ID.
         groupid (str): The group ID.
-    
+
     Methods:
         sh: Run a shell command in the Docker container.
-    
+
     Note:
         The command is run as root.
     """
+
     def __init__(
         self,
         image: str,
@@ -450,7 +457,7 @@ class RunDetails:
         self.status = "FAILURE"
         self.build_duration = ""
         self.test_duration = ""
-        
+
     def print_summary(self) -> None:
         """Print the performance metrics."""
         logger.info(
@@ -468,9 +475,33 @@ class RunDetails:
 
     def print_perf_metric(self) -> None:
         """Print the performance metric."""
-        logger.info(f"{self.model_name} performance is {self.performance} {self.metric}")
+        logger.info(
+            f"{self.model_name} performance is {self.performance} {self.metric}"
+        )
 
-    def generate_report(self, report_name: str, are_multiple_results: bool = False) -> None:
+    def generate_json(self, json_name, multiple_results=False):
+        """Generate the performance json.
+
+        Args:
+            json_name (str): The json name which is a json file.
+            multiple_results (bool): Whether there are multiple results.
+
+        Returns:
+            None
+        """
+        keys_to_exclude = (
+            {"model_name", "performance", "metric", "status"}
+            if multiple_results
+            else {}
+        )
+        attributes = vars(self)
+        output_dict = {x: attributes[x] for x in attributes if x not in keys_to_exclude}
+        with open(json_name, "w") as f:
+            json.dump(output_dict, f, indent=4)
+
+    def generate_report(
+        self, report_name: str, are_multiple_results: bool = False
+    ) -> None:
         """Generate the performance report.
 
         Args:
@@ -480,7 +511,11 @@ class RunDetails:
         Returns:
             None
         """
-        keys_to_exclude = {"model_name", "performance", "metric", "status"} if are_multiple_results else {}
+        keys_to_exclude = (
+            {"model_name", "performance", "metric", "status"}
+            if are_multiple_results
+            else {}
+        )
         attributes = vars(self)
         output_dict = {x: attributes[x] for x in attributes if x not in keys_to_exclude}
 
@@ -501,6 +536,7 @@ class RunDetails:
 # ==================================================================================================
 # Utility functions
 # ==================================================================================================
+
 
 def get_gpu_vendor() -> str:
     """Get the GPU vendor.
@@ -614,7 +650,11 @@ def get_system_gpus() -> int:
             )
         )
     elif gpu_vendor == "AMD":
-        number_gpus = int(subprocess.check_output("rocm-smi --showid --csv | grep card | wc -l", shell=True))
+        number_gpus = int(
+            subprocess.check_output(
+                "rocm-smi --showid --csv | grep card | wc -l", shell=True
+            )
+        )
     else:
         raise Exception(f"Unsupported GPU vendor: {gpu_vendor}")
 
@@ -696,7 +736,7 @@ def get_system_gpu_arch() -> str:
             .strip()
         )
         # Define the regex pattern, matches Axxx, Hxxx, or Vxxx where x can be any digit
-        pattern = r'([AHV])(\d{3})'
+        pattern = r"([AHV])(\d{3})"
         match = re.search(pattern, gpu_name)
         # Extract the GPU architecture from the GPU name.
         if match:
@@ -713,7 +753,7 @@ def get_system_gpu_arch() -> str:
         )
     else:
         raise Exception(f"Unsupported GPU vendor: {gpu_vendor}")
-    
+
     logger.info(f"GPU vendor: {gpu_vendor}")
     logger.info(f"GPU architecture: {gpu_arch}")
     return gpu_arch
@@ -826,10 +866,10 @@ def get_mount_docker_args(
 
 def get_base_docker(dockerfile: str) -> str:
     """Get the base Docker image.
-    
+
     Args:
         dockerfile (str): The Dockerfile.
-    
+
     Returns:
         str: The base Docker image.
     """
@@ -838,21 +878,27 @@ def get_base_docker(dockerfile: str) -> str:
 
     for line in lines:
         if "ARG BASE_DOCKER" in line:
-            return line.split('=')[-1].replace('\n', '').strip()
+            return line.split("=")[-1].replace("\n", "").strip()
 
     return ""
 
 
 def get_base_docker_sha(base_docker: str) -> str:
     """Get the base Docker image SHA.
-    
+
     Args:
         base_docker (str): The base Docker image.
-    
+
     Returns:
         str: The base Docker image SHA.
     """
-    return subprocess.check_output(f"docker inspect --format='{{{{.Id}}}}' {base_docker}", shell=True).decode("utf-8").strip()
+    return (
+        subprocess.check_output(
+            f"docker inspect --format='{{{{.Id}}}}' {base_docker}", shell=True
+        )
+        .decode("utf-8")
+        .strip()
+    )
 
 
 def get_host_name() -> str:
@@ -894,7 +940,7 @@ def read_log_file(log_file: str) -> str:
     """
     try:
         try:
-            with open(log_file, "r", encoding='utf-8') as f:
+            with open(log_file, "r", encoding="utf-8") as f:
                 log_content = f.read()
                 return log_content
         except UnicodeDecodeError as e:
@@ -914,7 +960,7 @@ def get_perf_metric(log_file: str) -> typing.Tuple[str, str]:
 
     Returns:
         typing.Tuple[str, str]: The performance and metric.
-    
+
     Raises:
         Exception: If the log file does not exist.
         Exception: If the log file is empty.
@@ -923,19 +969,19 @@ def get_perf_metric(log_file: str) -> typing.Tuple[str, str]:
     # Initialize the variables.
     perf = ""
     metric = ""
-    
+
     # Search 'performance:' and 'metric:' in the log file, if found, extract the values.
     if not os.path.exists(log_file):
         logger.error(f"Log file {log_file} does not exist")
         raise Exception(f"Log file {log_file} does not exist")
-    
+
     # Check if the log file is empty.
     if os.stat(log_file).st_size == 0:
         logger.error(f"Log file {log_file} is empty")
         raise Exception(f"Log file {log_file} is empty")
-    
+
     log_content = read_log_file(log_file)
-    
+
     # Check if the log file contains 'performance:' and 'metric:'.
     if not re.search("performance:", log_content):
         logger.error(f"Log file {log_file} does not contain performance")
@@ -945,11 +991,19 @@ def get_perf_metric(log_file: str) -> typing.Tuple[str, str]:
         perf = re.search(perf_regex, log_content).group(1)
         metric_regex = ".*performance:\\s*[+|-]?\d*[.]?\d*\\s*(\w*)\\s*"
         metric = re.search(metric_regex, log_content).group(1)
-    
+
     return perf, metric
 
-def update_dict(d, u):
-    """ Updates existing dictionary
+
+def update_dict(d: typing.Dict, u: typing.Dict) -> typing.Dict:
+    """Updates existing dictionary
+
+    Args:
+        d (dict): The existing dictionary.
+        u (dict): The new dictionary.
+
+    Returns:
+        dict: The updated dictionary
     """
     for k, v in u.items():
         if isinstance(v, collections.abc.Mapping):
@@ -957,3 +1011,223 @@ def update_dict(d, u):
         else:
             d[k] = v
     return d
+
+
+# ==================================================================================================
+# Performance CSV functions
+# ==================================================================================================
+def df_strip_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Strips the columns of a dataframe
+
+    Args:
+        df (pd.DataFrame): The dataframe
+
+    Returns:
+        pd.DataFrame: The dataframe with stripped columns
+    """
+    df.columns = df.columns.str.strip()
+    return df
+
+
+def read_json(js: str) -> typing.Dict:
+    """Reads a json file
+
+    Args:
+        js (str): The json file
+
+    Returns:
+        dict: The json file as a dictionary
+    """
+    with open(js, "r") as f:
+        return json.load(f)
+
+
+def flatten_tags(perf_entry: typing.Dict) -> None:
+    """Flattens the tags to a string
+
+    Args:
+        perf_entry (dict): The performance entry
+
+    Returns:
+        None
+    """
+    if type(perf_entry["tags"]) == list:
+        perf_entry["tags"] = ",".join(str(item) for item in perf_entry["tags"])
+
+
+def perf_entry_df_to_csv(perf_entry: pd.DataFrame) -> None:
+    """Writes the performance entry dataframe to a csv file
+
+    Args:
+        perf_entry (pd.DataFrame): The performance entry dataframe
+
+    Returns:
+        None
+    """
+    perf_entry.to_csv("perf_entry.csv", index=False)
+
+
+def perf_entry_dict_to_csv(perf_entry: typing.Dict) -> None:
+    """Writes the performance entry dictionary to a csv file
+
+    Args:
+        perf_entry (dict): The performance entry dictionary
+
+    Returns:
+        None
+    """
+    flatten_tags(perf_entry)
+    js_df = pd.DataFrame(perf_entry, index=[0])
+    perf_entry_df_to_csv(js_df)
+
+
+def handle_single_result(perf_csv_df: pd.DataFrame, single_result: str) -> pd.DataFrame:
+    """Handles the single result
+
+    Args:
+        perf_csv_df (pd.DataFrame): The performance csv dataframe.
+        single_result (str): The single result json file.
+
+    Returns:
+        pd.DataFrame: The updated performance csv dataframe
+    """
+    single_result_json = read_json(single_result)
+    perf_entry_dict_to_csv(single_result_json)
+    perf_csv_df = pd.concat(
+        [perf_csv_df, pd.DataFrame(single_result_json, index=[0])], ignore_index=True
+    )
+    return perf_csv_df
+
+
+def handle_exception_result(
+    perf_csv_df: pd.DataFrame, exception_result: str
+) -> pd.DataFrame:
+    """Handles the exception result
+
+    Args:
+        perf_csv_df (pd.DataFrame): The performance csv dataframe.
+        exception_result (str): The exception result json file.
+
+    Returns:
+        pd.DataFrame: The updated performance csv dataframe
+    """
+    exception_result_json = read_json(exception_result)
+    perf_entry_dict_to_csv(exception_result_json)
+    perf_csv_df = pd.concat(
+        [perf_csv_df, pd.DataFrame(exception_result_json, index=[0])], ignore_index=True
+    )
+
+    return perf_csv_df
+
+
+def handle_multiple_results(
+    perf_csv_df: pd.DataFrame, multiple_results: str, common_info: str, model_name: str
+) -> pd.DataFrame:
+    """Handles the multiple results
+
+    Args:
+        perf_csv_df (pd.DataFrame): The performance csv dataframe.
+        multiple_results (str): The multiple results json file.
+        common_info (str): The common information json file.
+        model_name (str): The model name.
+
+    Returns:
+        pd.DataFrame: The updated performance csv dataframe
+
+    Raises:
+        RuntimeError: If the multiple results CSV file does not have three columns: model, performance, metric
+        RuntimeError: If the multiple results CSV file is missing the model, performance, or metric column
+    """
+    # Check that the multiple results CSV has three columns and has the following format: model, performance, metric
+    multiple_results_df = df_strip_columns(pd.read_csv(multiple_results))
+    multiple_results_header = multiple_results_df.columns.tolist()
+
+    # Check that the multiple results CSV has three columns
+    if len(multiple_results_header) != 3:
+        raise RuntimeError(
+            "Multiple Results CSV file must have three columns: model, performance, metric"
+        )
+
+    # Check that the multiple results CSV has the model, performance, and metric columns
+    headings = ["model", "performance", "metric"]
+    for heading in headings:
+        if not (heading in multiple_results_header):
+            raise RuntimeError(
+                "Multiple Results CSV file is missing the " + heading + " column"
+            )
+
+    # Read the common information JSON file and flatten the tags
+    common_info_json = read_json(common_info)
+    # Flatten the tags
+    flatten_tags(common_info_json)
+
+    # Create a new dataframe to store the final results
+    final_multiple_results_df = pd.DataFrame()
+
+    # Add results to perf.csv
+    for r in multiple_results_df.to_dict(orient="records"):
+        row = common_info_json
+        row["model"] = model_name + "_" + str(r["model"])
+        row["performance"] = r["performance"]
+        row["metric"] = r["metric"]
+
+        if r["performance"] is not None and pd.notna(r["performance"]):
+            row["status"] = "SUCCESS"
+        else:
+            row["status"] = "FAILURE"
+
+        # Check that the number of columns in the row is the same as the number of columns in the CSV
+        assert perf_csv_df.columns.size == len(row)
+        # Add the row to the final results dataframe
+        final_multiple_results_df = pd.concat(
+            [final_multiple_results_df, pd.DataFrame(row, index=[0])], ignore_index=True
+        )
+
+    # Reorder the columns to match the perf.csv
+    final_multiple_results_df = final_multiple_results_df[perf_csv_df.columns]
+    # Write the final results to a CSV file
+    perf_entry_df_to_csv(final_multiple_results_df)
+    # Concatenate the final results to the perf.csv
+    perf_csv_df = pd.concat([perf_csv_df, final_multiple_results_df])
+    return perf_csv_df
+
+
+def update_perf_csv(
+    single_result: typing.Optional[str] = None,
+    exception_result: typing.Optional[str] = None,
+    failed_result: typing.Optional[str] = None,
+    multiple_results: typing.Optional[str] = None,
+    perf_csv: str = "perf.csv",
+    model_name: typing.Optional[str] = None,
+    common_info: typing.Optional[str] = None,
+) -> None:
+    """Updates the performance csv file with the new results
+
+    Args:
+        single_result (str): The single result json file.
+        exception_result (str): The exception result json file.
+        failed_result (str): The failed result json file.
+        multiple_results (str): The multiple results json file.
+        perf_csv (str): The performance csv file.
+        model_name (str): The model name.
+        common_info (str): The common information.
+
+    Returns:
+        None
+    """
+    # Read the perf.csv
+    perf_csv_df = df_strip_columns(pd.read_csv(perf_csv))
+
+    # Handle the results
+    if multiple_results:
+        perf_csv_df = handle_multiple_results(
+            perf_csv_df, multiple_results, common_info, model_name
+        )
+    elif single_result:
+        perf_csv_df = handle_single_result(perf_csv_df, single_result)
+    elif exception_result:
+        perf_csv_df = handle_exception_result(perf_csv_df, exception_result)
+
+    # Write the updated perf.csv
+    # Note that this file will also generate a perf_entry.csv regardless of the output file args.
+    perf_csv_df.to_csv(perf_csv, index=False)

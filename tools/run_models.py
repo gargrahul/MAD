@@ -108,6 +108,7 @@ from utils import get_env_docker_args, get_mount_docker_args, get_cpu_docker_arg
 from utils import get_system_gpus, get_system_gpu_arch, get_gpu_vendor, get_host_name, get_host_os
 from utils import get_base_docker, get_base_docker_sha
 from utils import get_perf_metric, update_dict
+from utils import update_perf_csv
 from utils import Console, Docker, Timeout, RunDetails
 from version import __version__
 from logger import get_logger
@@ -401,6 +402,12 @@ def run_model(
             status = 'SUCCESS'
         except Exception as e:
             logger.error(f"Failed to run the model: {e}")
+            status = 'FAILURE'
+            run_details.status = status
+            # Generate the report of exception
+            run_details.generate_json("perf_entry.json")
+            update_perf_csv(exception_result="perf_entry.json", perf_csv=output)
+            # Clean up the instance of docker
             del docker
             sys.exit(1)
         
@@ -428,19 +435,38 @@ def run_model(
         f"Successfully built and ran the Docker container: {model_docker_container}"
     )
 
-    # Parse the performance metrics for single result case
-    try:
-        run_details.performance, run_details.metric = get_perf_metric(log_file)
-        # Log the performance metrics
-        run_details.print_perf_metric()
-    except Exception as e:
-        logger.error(f"Failed to parse the performance metrics: {e}")
-
-    run_details.status = 'SUCCESS' if run_details.performance else 'FAILURE'      
-
     # Write the run details to the output file
     try:
-        run_details.generate_report(output)
+        if run_details.status == 'SUCCESS':
+            # Check if we are looking for a single result or multiple.
+            multiple_results = None if 'multiple_results' not in model else model['multiple_results']
+
+            # Get performance metric from log
+            if "multiple_results":
+                run_details.performance = multiple_results
+                run_details.generate_json("common_info.json", multiple_results=True)
+                update_perf_csv(
+                    multiple_results=model["multiple_results"], 
+                    perf_csv=output, 
+                    model_name=run_details.model_name, 
+                    common_info="common_info.json"
+                )
+            else:
+                # Parse the performance metrics for single result case
+                try:
+                    run_details.performance, run_details.metric = get_perf_metric(log_file)
+                    # Log the performance metrics
+                    run_details.print_perf_metric()
+                    run_details.generate_json("perf_entry.json")
+                    update_perf_csv(single_result="perf_entry.json", perf_csv=output)
+                except Exception as e:
+                    logger.error(f"Failed to parse the performance metrics: {e}")
+                    run_details.performance = None
+                    run_details.metric = None
+        else:
+            run_details.generate_json("perf_entry.json")
+            update_perf_csv(exception_result="perf_entry.json", perf_csv=output)
+        
     except Exception as e:
         logger.error(f"Failed to write the run details to the output file: {e}")
 
@@ -485,7 +511,11 @@ def main() -> bool:
     for model_info in models:
         if [x for x in user_tags["tags"] if x in model_info["tags"] or x == model_info["name"] ]:
             print("Selected MODEL, " + model_info["name"] + " :", model_info)
-            return_status &= run_model(model_info, args, console)
+            try:
+                return_status &= run_model(model_info, args, console)
+            except Exception as e:
+                print(f"Failed to run the model: {e}")
+                return_status = False
 
     return return_status
 
