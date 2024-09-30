@@ -1215,8 +1215,12 @@ def update_perf_csv(
     Returns:
         None
     """
-    # Read the perf.csv
-    perf_csv_df = df_strip_columns(pd.read_csv(perf_csv))
+    # Check that the perf.csv exists
+    if not os.path.exists(perf_csv):
+        perf_csv_df = pd.DataFrame()
+    else:
+        # Read the perf.csv
+        perf_csv_df = df_strip_columns(pd.read_csv(perf_csv))
 
     # Handle the results
     if multiple_results:
@@ -1227,6 +1231,10 @@ def update_perf_csv(
         perf_csv_df = handle_single_result(perf_csv_df, single_result)
     elif exception_result:
         perf_csv_df = handle_exception_result(perf_csv_df, exception_result)
+    else:
+        raise RuntimeError(
+            "At least one of the following must be provided: single_result, exception_result, failed_result, multiple_results"
+        )
 
     # Write the updated perf.csv
     # Note that this file will also generate a perf_entry.csv regardless of the output file args.
