@@ -430,19 +430,24 @@ def run_model(
 
     # Store the data for the run details
     run_details.status = status
+    logger.info(f"Status: {status}")
 
-    logger.info(
-        f"Successfully built and ran the Docker container: {model_docker_container}"
-    )
+    if status == 'SUCCESS':
+        logger.info(f"Model {model_name} ran successfully at container {model_docker_container}.")
+    else:
+        logger.error(f"Model {model_name} failed to run at container {model_docker_container}.")
 
     # Write the run details to the output file
     try:
         if run_details.status == 'SUCCESS':
             # Check if we are looking for a single result or multiple.
-            multiple_results = None if 'multiple_results' not in model else model['multiple_results']
+            # check model["multiple_results"] is empty or not
+            multiple_results = model['multiple_results'] if 'multiple_results' in model and model["multiple_results"] else None
 
             # Get performance metric from log
             if "multiple_results":
+                # Parse the performance metrics for multiple results case
+                logger.info(f"Multiple results: {multiple_results}")
                 run_details.performance = multiple_results
                 run_details.generate_json("common_info.json", multiple_results=True)
                 update_perf_csv(
@@ -454,10 +459,13 @@ def run_model(
             else:
                 # Parse the performance metrics for single result case
                 try:
+                    # Get the performance metrics
                     run_details.performance, run_details.metric = get_perf_metric(log_file)
                     # Log the performance metrics
                     run_details.print_perf_metric()
                     run_details.generate_json("perf_entry.json")
+                    # Update the performance metrics to the CSV file
+                    logger.info(f"Single result: {run_details.performance} {run_details.metric}")
                     update_perf_csv(single_result="perf_entry.json", perf_csv=output)
                 except Exception as e:
                     logger.error(f"Failed to parse the performance metrics: {e}")
