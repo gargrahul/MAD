@@ -1051,8 +1051,8 @@ def flatten_tags(perf_entry: typing.Dict) -> None:
     Returns:
         None
     """
-    if type(perf_entry["tags"]) == list:
-        perf_entry["tags"] = ",".join(str(item) for item in perf_entry["tags"])
+    if type(perf_entry["model_tags"]) == list:
+        perf_entry["model_tags"] = ",".join(str(item) for item in perf_entry["model_tags"])
 
 
 def perf_entry_df_to_csv(perf_entry: pd.DataFrame) -> None:

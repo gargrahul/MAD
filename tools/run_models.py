@@ -441,11 +441,10 @@ def run_model(
     try:
         if run_details.status == 'SUCCESS':
             # Check if we are looking for a single result or multiple.
-            # check model["multiple_results"] is empty or not
             multiple_results = model['multiple_results'] if 'multiple_results' in model and model["multiple_results"] else None
 
             # Get performance metric from log
-            if "multiple_results":
+            if multiple_results:
                 # Parse the performance metrics for multiple results case
                 logger.info(f"Multiple results: {multiple_results}")
                 run_details.performance = multiple_results
