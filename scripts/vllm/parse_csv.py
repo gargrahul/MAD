@@ -58,7 +58,7 @@ if __name__ == '__main__':
     file_throughput = args.file_throughput
 
     # Extract the model name from the file name
-    model_name = file_latency.split('_')[0]
+    model_name = file_latency.split('/')[-1].split('_')[0]
 
     df_latency = pd.DataFrame()
     df_throughput = pd.DataFrame()
