@@ -59,27 +59,31 @@ if __name__ == '__main__':
 
     # Extract the model name from the file name
     model_name = file_latency.split('_')[0]
+
+    df_latency = pd.DataFrame()
+    df_throughput = pd.DataFrame()
     
     # Check if the file exists
-    if os.path.exists(file_latency):
+    if file_latency and os.path.exists(file_latency):
         # Parse the CSV file
         df_latency = parse_latency_csv(file_latency)
         
         # Print the first 5 rows of the DataFrame
         print(df_latency.head())
     else:
-        print('The file does not exist.')
+        print('The file of latency summary is not found.')
 
     # Check if the file exists
-    if os.path.exists(file_throughput):
+    if file_throughput and os.path.exists(file_throughput):
         # Parse the CSV file
         df_throughput = parse_throughput_csv(file_throughput)
         
         # Print the first 5 rows of the DataFrame
         print(df_throughput.head())
     else:
-        print('The file does not exist.')
+        print('The file of throughput summary is not found.')
 
     # Combine the DataFrames of latency and throughput and write to a new CSV file
     df_combined = pd.concat([df_latency, df_throughput], ignore_index=True)
     df_combined.to_csv(f'perf_{model_name}.csv', index=False)
+    print('Parsing the multiple results and creating perf.csv have been done.')
