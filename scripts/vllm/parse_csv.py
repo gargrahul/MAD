@@ -85,5 +85,8 @@ if __name__ == '__main__':
 
     # Combine the DataFrames of latency and throughput and write to a new CSV file
     df_combined = pd.concat([df_latency, df_throughput], ignore_index=True)
-    df_combined.to_csv(f'perf_{model_name}.csv', index=False)
+
+    # Get the parent directory of the __file__
+    parent_dir = os.path.dirname(os.path.abspath(__file__))
+    df_combined.to_csv(f'{parent_dir}/perf_{model_name}.csv', index=False)
     print('Parsing the multiple results and creating perf.csv have been done.')
