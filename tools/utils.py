@@ -1236,6 +1236,8 @@ def update_perf_csv(
             "At least one of the following must be provided: single_result, exception_result, failed_result, multiple_results"
         )
 
-    logger.info(f"Writing the updated perf.csv")
+    logger.info(f"Updated performance dataframe:\n{perf_csv_df}")
+    
     # Note that this file will also generate a perf_entry.csv regardless of the output file args.
     perf_csv_df.to_csv(perf_csv, index=False)
+    logger.info(f"Wrote updated performance CSV to {perf_csv}")
