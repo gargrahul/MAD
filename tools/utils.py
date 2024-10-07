@@ -1149,7 +1149,7 @@ def handle_multiple_results(
         )
 
     # Check that the multiple results CSV has the model, performance, and metric columns
-    headings = ["model", "performance", "metric"]
+    headings = ["model_name", "performance", "metric"]
     for heading in headings:
         if not (heading in multiple_results_header):
             raise RuntimeError(
@@ -1167,7 +1167,7 @@ def handle_multiple_results(
     # Add results to perf.csv
     for r in multiple_results_df.to_dict(orient="records"):
         row = common_info_json
-        row["model"] = model_name + "_" + str(r["model"])
+        row["model_name"] = model_name + "_" + str(r["model_name"])
         row["performance"] = r["performance"]
         row["metric"] = r["metric"]
 

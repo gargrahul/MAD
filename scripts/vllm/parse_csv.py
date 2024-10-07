@@ -13,8 +13,8 @@ def parse_latency_csv(file_path):
     # Create a new DataFrame
     df_new = pd.DataFrame()
     
-    # Combine the columns of model, tp, batch_size, input_len, output_len, and dtype to a new column named 'model'
-    df_new['model'] = df['model'] + '_' + df['tp'].astype(str) + '_' + df['batch_size'].astype(str) + '_' + df['input_len'].astype(str) + '_' + df['output_len'].astype(str) + '_' + df['dtype']
+    # Combine the columns of model, tp, batch_size, input_len, output_len, and dtype to a new column named 'model_name'
+    df_new['model_name'] = df['model'] + '_' + df['tp'].astype(str) + '_' + df['batch_size'].astype(str) + '_' + df['input_len'].astype(str) + '_' + df['output_len'].astype(str) + '_' + df['dtype']
     
     # Put the column of 'latency (ms)' to a new column named 'performance'
     df_new['performance'] = df['latency (ms)']
@@ -31,8 +31,8 @@ def parse_throughput_csv(file_path):
     # Create a new DataFrame
     df_new = pd.DataFrame()
     
-    # Combine the columns of model, tp, batch_size, input_len, output_len, and dtype to a new column named 'model'
-    df_new['model'] = df['model'] + '_' + df['tp'].astype(str) + '_' + df['requests'].astype(str) + '_' + df['input_len'].astype(str) + '_' + df['output_len'].astype(str) + '_' + df['dtype']
+    # Combine the columns of model, tp, batch_size, input_len, output_len, and dtype to a new column named 'model_name'
+    df_new['model_name'] = df['model'] + '_' + df['tp'].astype(str) + '_' + df['requests'].astype(str) + '_' + df['input_len'].astype(str) + '_' + df['output_len'].astype(str) + '_' + df['dtype']
     
     # Put the column of 'throughput_tot (tok/sec)' to a new column named 'performance'
     df_new['performance'] = df['throughput_tot (tok/sec)']
