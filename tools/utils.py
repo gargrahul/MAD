@@ -1217,7 +1217,26 @@ def update_perf_csv(
     """
     # Check that the perf.csv exists
     if not os.path.exists(perf_csv):
-        perf_csv_df = pd.DataFrame()
+        columns = [
+            "model_name",
+            "model_tags",
+            "model_args",
+            "model_dockerfile",
+            "model_base_docker",
+            "model_docker_sha",
+            "model_docker_image",
+            "host_name",
+            "host_os",
+            "sys_gpu_arch",
+            "sys_n_gpus",
+            "training_precision",
+            "performance",
+            "metric",
+            "status",
+            "build_duration",
+            "test_duration",
+        ]
+        perf_csv_df = pd.DataFrame(columns=columns)
     else:
         # Read the perf.csv
         perf_csv_df = df_strip_columns(pd.read_csv(perf_csv))
@@ -1237,7 +1256,7 @@ def update_perf_csv(
         )
 
     logger.info(f"Updated performance dataframe:\n{perf_csv_df}")
-    
+
     # Note that this file will also generate a perf_entry.csv regardless of the output file args.
     perf_csv_df.to_csv(perf_csv, index=False)
     logger.info(f"Wrote updated performance CSV to {perf_csv}")
