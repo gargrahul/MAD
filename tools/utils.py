@@ -414,16 +414,17 @@ class RunDetails:
     """A class to store the run details.
 
     Attributes:
-        model_name (str): The model name.
-        model_args (str): The model arguments.
-        model_tags (str): The model tags.
-        model_dockerfile (str): The model Dockerfile.
-        model_base_docker (str): The model base Docker image.
-        model_docker_sha (str): The model Docker image SHA.
-        model_docker_image (str): The model Docker image.
+        model (str): The model name.
+        pipeline (str): The model pipeline.
+        args (str): The model arguments.
+        tags (str): The model tags.
+        docker_file (str): The model Dockerfile.
+        base_docker (str): The model base Docker image.
+        docker_sha (str): The model Docker image SHA.
+        docker_image (str): The model Docker image.
         machine_name (str): The machine name.
-        sys_gpu_arch (str): The system GPU architecture.
-        sys_n_gpus (str): The system number of GPUs.
+        gpu_architecture (str): The system GPU architecture.
+        n_gpus (str): The system number of GPUs.
         training_precision (str): The training precision.
         performance (str): The performance.
         metric (str): The metric.
@@ -440,17 +441,18 @@ class RunDetails:
 
     def __init__(self) -> None:
         """Initialize the RunDetails class."""
-        self.model_name = ""
-        self.model_tags = ""
-        self.model_args = ""
-        self.model_dockerfile = ""
-        self.model_base_docker = ""
-        self.model_docker_sha = ""
-        self.model_docker_image = ""
-        self.host_name = ""
+        self.model = ""
+        self.pipeline = ""
+        self.tags = ""
+        self.args = ""
+        self.docker_file = ""
+        self.base_docker = ""
+        self.docker_sha = ""
+        self.docker_image = ""
+        self.machine_name = ""
         self.host_os = ""
-        self.sys_gpu_arch = ""
-        self.sys_n_gpus = ""
+        self.gpu_architecture = ""
+        self.n_gpus = ""
         self.training_precision = ""
         self.performance = ""
         self.metric = ""
@@ -461,10 +463,10 @@ class RunDetails:
     def print_summary(self) -> None:
         """Print the performance metrics."""
         logger.info(
-            f"Model: {self.model_name}, "
+            f"Model: {self.model}, "
             f"Machine: {self.machine_name}, "
-            f"GPU: {self.sys_n_gpus}, "
-            f"GPU Arch: {self.sys_gpu_arch}, "
+            f"GPU: {self.n_gpus}, "
+            f"GPU Arch: {self.gpu_architecture}, "
             f"Precision: {self.training_precision}, "
             f"Performance: {self.performance}, "
             f"Metric: {self.metric}, "
@@ -476,7 +478,7 @@ class RunDetails:
     def print_perf_metric(self) -> None:
         """Print the performance metric."""
         logger.info(
-            f"{self.model_name} performance is {self.performance} {self.metric}"
+            f"{self.model} performance is {self.performance} {self.metric}"
         )
 
     def generate_json(self, json_name, multiple_results=False):
@@ -490,7 +492,7 @@ class RunDetails:
             None
         """
         keys_to_exclude = (
-            {"model_name", "performance", "metric", "status"}
+            {"model", "performance", "metric", "status"}
             if multiple_results
             else {}
         )
@@ -512,7 +514,7 @@ class RunDetails:
             None
         """
         keys_to_exclude = (
-            {"model_name", "performance", "metric", "status"}
+            {"model", "performance", "metric", "status"}
             if are_multiple_results
             else {}
         )
@@ -1051,8 +1053,8 @@ def flatten_tags(perf_entry: typing.Dict) -> None:
     Returns:
         None
     """
-    if type(perf_entry["model_tags"]) == list:
-        perf_entry["model_tags"] = ",".join(str(item) for item in perf_entry["model_tags"])
+    if type(perf_entry["tags"]) == list:
+        perf_entry["tags"] = ",".join(str(item) for item in perf_entry["tags"])
 
 
 def perf_entry_df_to_csv(perf_entry: pd.DataFrame) -> None:
@@ -1149,7 +1151,7 @@ def handle_multiple_results(
         )
 
     # Check that the multiple results CSV has the model, performance, and metric columns
-    headings = ["model_name", "performance", "metric"]
+    headings = ["model", "performance", "metric"]
     for heading in headings:
         if not (heading in multiple_results_header):
             raise RuntimeError(
@@ -1167,7 +1169,7 @@ def handle_multiple_results(
     # Add results to perf.csv
     for r in multiple_results_df.to_dict(orient="records"):
         row = common_info_json
-        row["model_name"] = model_name + "_" + str(r["model_name"])
+        row["model"] = model_name + "_" + str(r["model"])
         row["performance"] = r["performance"]
         row["metric"] = r["metric"]
 
@@ -1218,17 +1220,17 @@ def update_perf_csv(
     # Check that the perf.csv exists
     if not os.path.exists(perf_csv):
         columns = [
-            "model_name",
-            "model_tags",
-            "model_args",
-            "model_dockerfile",
-            "model_base_docker",
-            "model_docker_sha",
-            "model_docker_image",
-            "host_name",
+            "model",
+            "tags",
+            "args",
+            "docker_file",
+            "base_docker",
+            "docker_sha",
+            "docker_image",
+            "machine_name",
             "host_os",
-            "sys_gpu_arch",
-            "sys_n_gpus",
+            "gpu_architecture",
+            "n_gpus",
             "training_precision",
             "performance",
             "metric",

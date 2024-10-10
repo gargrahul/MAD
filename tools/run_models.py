@@ -222,10 +222,11 @@ def run_model(
     run_details = RunDetails()
 
     # Store the data for the run details
-    run_details.host_name = get_host_name()
+    run_details.machine_name = get_host_name()
     run_details.host_os = get_host_os()
-    run_details.sys_gpu_arch = get_system_gpu_arch()
-    run_details.sys_n_gpus = get_system_gpus()    
+    run_details.gpu_architecture = get_system_gpu_arch()
+    run_details.n_gpus = get_system_gpus()    
+    run_details.pipeline = os.environ.get('pipeline')
 
     # Parse the model dictionary
     model_url = model["url"] if "url" in model else None
@@ -254,11 +255,11 @@ def run_model(
     model_docker_container = f"container_ci-{model_name}"
 
     # Store the data for the run details
-    run_details.model_name = model_name
-    run_details.model_tags = model_tags
-    run_details.model_args = model_args
-    run_details.model_dockerfile = model_dockerfile
-    run_details.model_docker_image = model_docker_image
+    run_details.model = model_name
+    run_details.tags = model_tags
+    run_details.args = model_args
+    run_details.docker_file = model_dockerfile
+    run_details.docker_image = model_docker_image
     run_details.training_precision = training_precision
 
     # Build the Docker image
@@ -286,8 +287,8 @@ def run_model(
     logger.info(f"Base Docker SHA: {base_docker_sha}")
 
     # Store the data for the run details
-    run_details.model_base_docker = get_base_docker(model_dockerfile)
-    run_details.model_docker_sha = get_base_docker_sha(model_docker_image)
+    run_details.base_docker = get_base_docker(model_dockerfile)
+    run_details.docker_sha = get_base_docker_sha(model_docker_image)
     run_details.build_duration = build_duration
 
     # Run the Docker container
@@ -452,7 +453,7 @@ def run_model(
                 update_perf_csv(
                     multiple_results=model["multiple_results"], 
                     perf_csv=output, 
-                    model_name=run_details.model_name, 
+                    model_name=run_details.model, 
                     common_info="common_info.json"
                 )
             else:
