@@ -24,7 +24,7 @@
 # SOFTWARE.
 #
 #################################################################################
-ARG BASE_DOCKER=rocm/pytorch:latest
+ARG BASE_DOCKER=rocm/pytorch:rocm6.2.3_ubuntu22.04_py3.10_pytorch_release_2.3.0
 FROM $BASE_DOCKER
 
 USER root
@@ -39,6 +39,7 @@ RUN pip3 install -U scipy
 RUN cd /workspace && git clone https://github.com/ROCm/transformers transformers &&\
     cd transformers &&\
     git show --oneline -s && \
+    git checkout rocm6.3_testing_rel4.43 &&\
     pip install -e .
 
 # Intentionally skip torchaudio, else it force upgrades torch as well
