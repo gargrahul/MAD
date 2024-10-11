@@ -365,8 +365,13 @@ def run_model(
             docker.sh(f"mkdir {model_dir}")
 
         # Update the submodules
-        docker.sh(f"git config --global --add safe.directory /myworkspace/{model_dir}")
         docker.sh(f"git config --global --add safe.directory /myworkspace")
+        docker.sh(f"git config --global --add safe.directory /myworkspace/{model_dir}")
+
+        # echo git commit
+        run_details.git_commit = docker.sh(f"cd {model_dir} && git rev-parse HEAD")
+        logger.info(f"MODEL GIT COMMIT is {run_details.git_commit}")
+        
         if model_url:
             docker.sh(f"cd {model_dir} && git submodule update --init --recursive")
 

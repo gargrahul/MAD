@@ -459,6 +459,8 @@ class RunDetails:
         self.status = "FAILURE"
         self.build_duration = ""
         self.test_duration = ""
+        self.git_commit = ""
+        self.relative_change = ""
 
     def print_summary(self) -> None:
         """Print the performance metrics."""
@@ -1237,6 +1239,8 @@ def update_perf_csv(
             "status",
             "build_duration",
             "test_duration",
+            "git_commit",
+            "relative_change",
         ]
         perf_csv_df = pd.DataFrame(columns=columns)
     else:
