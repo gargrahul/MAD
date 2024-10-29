@@ -163,5 +163,18 @@
     ],
     "args":
      "--model_repo core42/jais-30b-chat-v3 --test_option latency,throughput --num_gpu 1 --datatype float16"
+  },
+  {
+    "name": "dummy_multi",
+    "dockerfile": "docker/dummy",
+    "scripts": "scripts/dummy/run_multi.sh",
+    "n_gpus": "1",
+    "owner": "mad.support@amd.com",
+    "training_precision": "",
+    "tags": [
+      "dummies"
+    ],
+    "args": "",
+    "multiple_results": "perf_dummy.csv"
   }
 ]
