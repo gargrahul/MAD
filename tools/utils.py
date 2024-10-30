@@ -1222,6 +1222,7 @@ def update_perf_csv(
     # Check that the perf.csv exists
     if not os.path.exists(perf_csv):
         columns = [
+            "pipeline",
             "model",
             "tags",
             "args",
