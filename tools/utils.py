@@ -1142,6 +1142,7 @@ def handle_multiple_results(
         RuntimeError: If the multiple results CSV file does not have three columns: model, performance, metric
         RuntimeError: If the multiple results CSV file is missing the model, performance, or metric column
     """
+    logger.info("Debug 3")
     # Check that the multiple results CSV has three columns and has the following format: model, performance, metric
     multiple_results_df = df_strip_columns(pd.read_csv(multiple_results))
     multiple_results_header = multiple_results_df.columns.tolist()
@@ -1170,6 +1171,7 @@ def handle_multiple_results(
 
     # Add results to perf.csv
     for r in multiple_results_df.to_dict(orient="records"):
+        logger.info("Debug 4")
         row = common_info_json
         row["model"] = model_name + "_" + str(r["model"])
         row["performance"] = r["performance"]
@@ -1186,6 +1188,7 @@ def handle_multiple_results(
         final_multiple_results_df = pd.concat(
             [final_multiple_results_df, pd.DataFrame(row, index=[0])], ignore_index=True
         )
+        logger.info(final_multiple_results_df)
 
     # Reorder the columns to match the perf.csv
     final_multiple_results_df = final_multiple_results_df[perf_csv_df.columns]
@@ -1220,6 +1223,7 @@ def update_perf_csv(
         None
     """
     # Check that the perf.csv exists
+    logger.info("Debug 1")
     if not os.path.exists(perf_csv):
         columns = [
             "pipeline",
@@ -1247,9 +1251,11 @@ def update_perf_csv(
     else:
         # Read the perf.csv
         perf_csv_df = df_strip_columns(pd.read_csv(perf_csv))
-
+    logger.info(perf_csv_df)
+    
     # Handle the results
     if multiple_results:
+        logger.info("Debug 2")
         perf_csv_df = handle_multiple_results(
             perf_csv_df, multiple_results, common_info, model_name
         )
