@@ -1193,7 +1193,6 @@ def handle_multiple_results(
     perf_entry_df_to_csv(final_multiple_results_df)
     # Concatenate the final results to the perf.csv
     perf_csv_df = pd.concat([perf_csv_df, final_multiple_results_df])
-    logger.info(perf_csv_df)
     return perf_csv_df
 
 
