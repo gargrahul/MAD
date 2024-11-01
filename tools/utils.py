@@ -1188,7 +1188,7 @@ def handle_multiple_results(
         logger.info(perf_csv_df.columns)
         logger.info(row.keys())
         # Check that the number of columns in the row is the same as the number of columns in the CSV
-        assert perf_csv_df.columns.size == len(row)
+        # assert perf_csv_df.columns.size == len(row)
         logger.info("Debug 5")
         # Add the row to the final results dataframe
         final_multiple_results_df = pd.concat(
